@@ -1,4 +1,13 @@
 let messages = [];
+let isWaiting = false;
+
+function setInputEnabled(enabled) {
+    const sendButton = document.getElementById('sendButton');
+    const messageInput = document.getElementById('messageInput');
+
+    if (sendButton) sendButton.disabled = !enabled;
+    if (messageInput) messageInput.disabled = !enabled;
+}
 
 function startNewChat() {
     messages = [];
@@ -13,10 +22,15 @@ function startNewChat() {
 }
 
 function sendMessage() {
+    if (isWaiting) return;
+
     const input = document.getElementById('messageInput');
     const message = input.value.trim();
 
     if (message === '') return;
+
+    isWaiting = true;
+    setInputEnabled(false);
 
     // Add user message
     messages.push({ role: 'user', content: message });
@@ -32,6 +46,8 @@ function sendMessage() {
             role: 'assistant',
             content: 'This is a demo response. Connect to a real API to get actual AI responses.'
         });
+        isWaiting = false;
+        setInputEnabled(true);
         displayMessages();
     }, 500);
 }
@@ -84,6 +100,7 @@ function escapeHtml(text) {
 // Focus input on load
 window.addEventListener('load', () => {
     document.getElementById('messageInput').focus();
+    setInputEnabled(true);
 });
 
 // Make functions globally available

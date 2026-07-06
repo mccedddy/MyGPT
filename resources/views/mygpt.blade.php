@@ -57,7 +57,7 @@
                         oninput="autoResizeTextarea(event)"
                         rows="1"
                     ></textarea>
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" onclick="sendMessage()">
+                    <button id="sendButton" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed" onclick="sendMessage()">
                         Send
                     </button>
                 </div>
