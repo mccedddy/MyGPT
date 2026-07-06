@@ -11,6 +11,12 @@
         <!-- Sidebar -->
         <div class="w-64 bg-gray-950 border-r border-gray-800 flex flex-col">
             <div class="p-4 border-b border-gray-800">
+                <a href="/" class="flex items-center gap-3 text-sm font-semibold text-white transition">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500 text-sm font-bold text-slate-950">M</span>
+                    <span>MyGPT</span>
+                </a>
+            </div>
+            <div class="p-4 border-b border-gray-800">
                 <button class="w-full py-2 px-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg flex items-center justify-center gap-2 transition" onclick="startNewChat()">
                     <span>+</span>
                     <span>New chat</span>
