@@ -15,3 +15,34 @@
 ::-webkit-scrollbar-thumb:hover {
     background: #5a6574;
 }
+
+.messages-area {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1rem;
+}
+
+.user-bubble {
+    width: auto;
+    max-width: min(70vw, 38rem);
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.assistant-response {
+    width: 100%;
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.assistant-response p,
+.user-bubble p {
+    margin: 0.5rem 0;
+}
+
+.assistant-response pre,
+.user-bubble pre {
+    margin: 0.75rem 0;
+}

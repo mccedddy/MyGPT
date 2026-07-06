@@ -44,7 +44,7 @@ function sendMessage() {
     setTimeout(() => {
         messages.push({
             role: 'assistant',
-            content: 'This is a demo response. Connect to a real API to get actual AI responses.'
+            content: 'This is a demo response. Connect to a real API to get actual AI responses. This is a demo response. Connect to a real API to get actual AI responses. This is a demo response. Connect to a real API to get actual AI responses. \n\nThis is a demo response. Connect to a real API to get actual AI responses.\nThis is a demo response. Connect to a real API to get actual AI responses. This is a demo response. Connect to a real API to get actual AI responses.'
         });
         isWaiting = false;
         setInputEnabled(true);
@@ -67,7 +67,7 @@ function displayMessages() {
 
     messagesArea.innerHTML = messages.map(msg => `
         <div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-3">
-            <div class="max-w-lg px-4 py-2 rounded-lg ${msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-100'}">
+            <div class="${msg.role === 'user' ? 'max-w-lg px-4 py-2 rounded-lg bg-blue-600 text-white' : 'w-full max-w-full px-5 py-4 rounded-2xl'}">
                 ${escapeHtml(msg.content)}
             </div>
         </div>
