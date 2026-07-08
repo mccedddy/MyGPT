@@ -31,7 +31,7 @@
                             </div>
                         @endif
                     </div>
-                    <a href="/mygpt" class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-400">Go to MyGPT</a>
+                    <a href="/chat" class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-5 py-2.5 text-sm font-semibold text-slate-950 shadow-lg shadow-cyan-500/20 transition hover:bg-cyan-400">Go to MyGPT</a>
                 </nav>
 
                 <main class="mx-auto mt-20 max-w-5xl text-center">
@@ -39,7 +39,7 @@
                     <h1 class="mt-6 text-5xl font-semibold tracking-tight text-white sm:text-6xl">A smarter chat landing page for your AI workflow</h1>
                     <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-slate-300">Explore a polished hero experience, then jump straight into your MyGPT chat page with a single click.</p>
                     <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-6">
-                        <a href="/mygpt" class="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-slate-950/20 transition hover:bg-slate-100">Open MyGPT</a>
+                        <a href="/chat" class="inline-flex items-center justify-center rounded-full bg-white px-7 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-slate-950/20 transition hover:bg-slate-100">Open MyGPT</a>
                         <span class="inline-flex items-center justify-center rounded-full border border-slate-700 bg-white/5 px-6 py-3 text-sm text-slate-200">Built for fast local dev</span>
                     </div>
                 </main>
@@ -75,7 +75,7 @@
                         </article>
                         <article class="rounded-[1.75rem] border border-white/10 bg-white/5 p-8 shadow-2xl shadow-slate-950/20 backdrop-blur-md sm:col-span-2">
                             <h3 class="text-xl font-semibold text-white">Fast routing</h3>
-                            <p class="mt-3 text-sm leading-6 text-slate-300">Your root route now welcomes users and sends them directly to <code class="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-200">/mygpt</code>.</p>
+                            <p class="mt-3 text-sm leading-6 text-slate-300">Your root route now welcomes users and sends them directly to <code class="rounded bg-slate-800 px-1.5 py-0.5 text-xs text-cyan-200">/chat</code>.</p>
                         </article>
                     </div>
                 </section>
@@ -86,7 +86,7 @@
                             <p class="text-sm uppercase tracking-[0.35em] text-cyan-200/70">Ready to begin?</p>
                             <p class="mt-2 text-2xl font-semibold text-white">Click below to enter the MyGPT experience.</p>
                         </div>
-                        <a href="/mygpt" class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-7 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">Launch MyGPT</a>
+                        <a href="/chat" class="inline-flex items-center justify-center rounded-full bg-cyan-500 px-7 py-3 text-sm font-semibold text-slate-950 transition hover:bg-cyan-400">Launch MyGPT</a>
                     </div>
                 </div>
             </div>

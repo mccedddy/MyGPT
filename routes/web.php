@@ -6,6 +6,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/mygpt', function () {
-    return view('mygpt');
+Route::get('/chat', function () {
+    return view('chat');
 });
