@@ -1,3 +1,6 @@
+// Import
+import { marked } from "marked";
+
 // State
 let messages = [];
 let isWaiting = false;
@@ -40,13 +43,20 @@ export function displayMessages() {
         return;
     }
 
-    messagesArea.innerHTML = messages.map(msg => `
-        <div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-3">
-            <div class="${msg.role === 'user' ? 'max-w-lg px-4 py-2 rounded-lg bg-blue-600 text-white' : 'w-full max-w-full px-5 py-4 rounded-2xl'}">
-                ${escapeHtml(msg.content)}
+    messagesArea.innerHTML = messages.map(msg => {
+        // Parse markdown for assistant responses, escape HTML for user messages
+        const contentResponse = msg.role === 'assistant' 
+            ? marked.parse(msg.content)
+            : `<p>${escapeHtml(msg.content)}</p>`;
+        
+        return `
+            <div class="flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} gap-3">
+                <div class="${msg.role === 'user' ? 'max-w-lg px-4 py-2 rounded-lg bg-blue-600 text-white' : 'px-5 py-4 rounded-2xl text-slate-100 prose-sm prose prose-invert'}">
+                    ${contentResponse}
+                </div>
             </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 
     // Scroll to bottom
     messagesArea.scrollTop = messagesArea.scrollHeight;
