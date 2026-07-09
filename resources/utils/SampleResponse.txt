@@ -1,142 +1,52 @@
-It is important to clarify the architecture first: **You (the current model) cannot run yourself inside Ollama.**
-You are a large language model running on servers like Google's or AWS. To run an AI locally using the "Ollama" method, you need to download and host one of the models that supports this format (like Llama 3, Mistral, Gemma,
-etc.).
+Here are the final instructions based on our findings:
 
-Here is your step-by-step guide to setting up a local server with Ollama and building your ChatGPT clone.
+### 1. Confirm Current Status
+Your Ollama instance (`ollama serve`) is currently active in PowerShell with **qwen3.5:9b** loaded (or available)
+and listening by default. No commands to start or kill are needed right now. The API is already live at the
+standard address.
 
----
+### 2. Accessing the API
+Since your server is running on `127.0.0.1` (localhost), you do not need flags like `--host`. Your external tools
+should connect directly to these endpoints:
 
-### Phase 1: Setting Up Your Local Server via Ollama
+*   **Base URL:** `http://127.0.0.1:11434`
+    *   *(Note: If you want your web app on the same machine or another device in your LAN, replace `127.0.0.1`
+with your actual IP address like `192.168.x.x`, but for local testing via PowerShell or localhost apps, use this
+base).*
 
-To turn your computer into an AI chatbot host, you need the **Ollama application**. It acts as the backend API that exposes the model to the world (or just locally).
-
-#### Step 1: Install Ollama
-1.  Visit **[ollama.com](https://ollama.ai)**.
-2.  Download and install the app for your OS (Windows, macOS, or Linux). The installer is roughly **50 MB**.
-3.  Once installed, open your terminal/command prompt and download a model.
-    *   To get Llama 3 (the current standard), run:
-        ```bash
-        ollama pull llama3
-        ```
-4.  Start the service automatically with one command:
-    ```bash
-    ollama serve
-    ```
-    *(Keep this terminal window open while you work; it runs in the background and listens on
-`http://localhost:11434`)*
-
-#### Step 2: Verify It's Running
-Run a quick test to ensure your "server" is up:
+#### Verification Endpoint
+Before sending full prompts to avoid token limits:
 ```bash
-ollama run llama3
-```
-Type "Hello", press Enter, type another message, then stop the session with `Ctrl+C`. You have now successfully
-hosted an AI locally.
-
----
-
-### Phase 2: Connecting Your Frontend via API
-
-Now that `ollama serve` is running in your background terminal (listening at port **11434**), you can connect any frontend to it using Python, JavaScript, or a mobile app.
-
-#### The Basic Logic
-You will send a JSON request with the user's prompt and receive back the generated text.
-
-**Example: Using Python (`requests`)**
-```python
-import requests
-
-def chat_with_ollama(prompt):
-    # Endpoint where Ollama serves itself (default is localhost)
-    url = "http://localhost:11434/api/generate"
-
-    payload = {
-        "model": "llama3",      # Change this to the model you pulled earlier
-        "prompt": prompt,       # The user's question
-        "stream": False         # Set True for streaming tokens one by one (recommended)
-    }
-
-    response = requests.post(url, json=payload)
-
-    if response.status_code == 200:
-        return response.json()['response']
-    else:
-        return f"Error: {response.text}"
-
-# Usage
-user_input = "Tell me a joke about coding."
-bot_reply = chat_with_ollama(user_input)
-print(bot_reply)
+curl http://localhost:11434/api/tags
+# OR in PowerShell if you prefer native calls without curl (if installed) / Invoke-RestMethod:
+$models = Invoke-RestMethod -Uri "http://localhost:11434/api/tags"
+Write-Host $models.models.name | Out-String
 ```
 
-**Example: Using JavaScript (Node.js)**
-Use `axios` or the native `fetch`:
-```javascript
-const response = await fetch('http://localhost:11434/api/generate', {
-  method: 'POST',
-  headers: {'Content-Type': 'application/json'},
-  body: JSON.stringify({
-    model: "llama3",
-    prompt: userPrompt,
-    stream: false
-  })
-});
+#### Generating Text Endpoint
+Use this to send your actual prompts. Note that **qwen3.5** models can sometimes require the full model name or a
+shorter alias depending on how they were installed, but `api/chat` is standard:
 
-const data = await response.json();
-console.log(data.response);
+```bash
+# Example using PowerShell Invoke-RestMethod (No curl needed)
+$body = @{
+    model  = "qwen3.5"
+    prompt = "What is your main capability?"
+    stream = $true | ConvertTo-Json # Set to false if streaming issues occur in older clients
+} -as [pscustomobject]
+
+Invoke-RestMethod -Uri "http://localhost:11434/api/chat" -Body ($body | ConvertTo-Json) | Out-String |
+Invoke-WebRequest -UseBasicParsing
 ```
 
----
+### 3. Important Configuration Notes for Your Setup
+*   **Model Name Consistency**: Ensure your application code (Python, Node.js, etc.) references the model exactly
+as registered in Ollama's internal list (`qwen3.5:9b`). If you shortened it to just `qwen3.5` or similar, ensure
+that short alias resolves correctly via `/api/tags`.
+*   **Port Binding**: Your instance is bound at port `11434`. Do not change this unless explicitly configured in
+the Ollama config file (which usually resides outside your PowerShell session).
+*   **Streaming vs. Batch Mode**: If you encounter errors with large context windows on qwen3.5:9b, try setting
+`stream = false` in your request payload to get a single full response instead of line-by-line chunks.
 
-### Phase 3: Building Your ChatGPT Clone (Crucial Concepts)
-
-To build a robust clone, you must understand how LLMs generate text and manage conversations. Here are the essential things to know:
-
-#### 1. Context Window & Temperature Settings
-When calling the API, these parameters control behavior:
-*   **Temperature (`0 - 2`)**: Controls creativity.
-    *   `low (e.g., 0.3)`: Deterministic, factual, good for coding or math.
-    *   `high (e.g., 0.8+)`: Creative, creative writing, roleplay.
-*   **Top P / Top K**: Advanced sampling techniques to prevent the AI from repeating boring common words. Stick to
-defaults unless you need specific control.
-
-#### 2. Handling Conversations (System Prompts)
-LLMs are stateless per message; they don't "remember" previous chats forever in memory until you provide them with context via a **Context Window**. You must pass the conversation history as an array of messages.
-
-**The Pattern:**
-```json
-[
-  { "role": "system", "content": "You are a helpful coding assistant named 'CodeBot'." },
-  { "role": "user", "content": "How do I install Python?" },
-  { "role": "assistant", "content": "Run pip install python..." }
-]
-```
-
-**Why this matters:** Every time the user sends a new message, you must append it to your history list, send that full history (plus maybe only recent messages) back to Ollama. This creates the illusion of memory. If your chat log gets too long (>12k or >30k tokens depending on the model), performance will drop. You may need an algorithmic summarizer to truncate old history occasionally.
-
-#### 3. Streaming Responses (Critical for UX)
-Do not use `stream: false`. Large models take a second to generate text; showing users a loading spinner is bad UI design.
-*   Set `"stream": true` in your API request.
-*   Your frontend must handle **WebSockets** or the Ollama streaming format (`data.response`) chunk by chunk. This makes the bot appear "alive" and fast.
-
-#### 4. Model Selection Strategy
-Not all local models are created equal for different uses:
-*   **Llama 3 (8B)**: Great general balance of speed and intelligence on consumer hardware.
-*   **Mistral / Phi-3**: Excellent efficiency; very small but surprisingly smart, runs faster on older GPUs/CPU.
-*   **Quantization Matters**: When installing via Ollama (`ollama pull llama3`), it downloads a quantized version (Q4_K_M or similar). This compresses the model to fit in memory while keeping accuracy high (~95%). Don't try to run full precision models locally unless you have massive RAM.
-
-#### 5. Security & Multi-User Note
-If your ChatGPT clone is web-accessible by others on a LAN:
-*   Ollama listens at `localhost` (127.0.0.1) by default for security. **You must change the host to `0.0.0.0`**
-if you want other devices to connect easily, or configure your firewall carefully.
-    *   In Docker/Others: Add `-e OLLAMA_HOST=0.0.0.0`.
-*   Note that standard OpenAI-style authentication (API Keys) is **not built into the native Ollama model**. You usually implement a proxy layer (like FastAPI in Python/Node) to validate users and manage chat sessions if you want multi-user access, or just accept it's for single-use/local testing.
-
-### Summary Checklist for Your Project
-1.  Install `ollama` and pull a base model (`llama3`, `mistral`).
-2.  Run `ollama serve`.
-3.  Connect your frontend to `http://localhost:11434/api/generate`.
-4.  Implement **Streaming** for real-time text appearance.
-5.  Maintain a **message history array** sent in the body of every request to preserve conversation context.
-
-If you encounter specific errors with connections or model loading, feel free to paste them here!
+### Summary Command for Your External App
+When initializing your connection
